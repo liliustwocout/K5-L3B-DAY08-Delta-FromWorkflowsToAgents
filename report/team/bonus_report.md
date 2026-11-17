@@ -1,6 +1,6 @@
 # Bonus report: B7
 
-> **Ghi chú nộp bài:** `python -m lab8.check_submission` báo `[FAIL] report/team/bonus_report.md: tiêu đề phải là '# Bonus report: B1' .. 'B6'` vì regex ở `src/lab8/check_submission.py:243` là `B[1-6]`; công cụ chưa được cập nhật khi đề bài thêm B7 (`docs/bonus_topics.md`). Nhóm giữ đúng tiêu đề B7 và không sửa `check_submission.py`. Ngoài dòng này, `check_submission` không còn FAIL nào khác.
+> **Ghi chú nộp bài:** `python -m lab8.check_submission` báo 1 FAIL cho file này (đòi tiêu đề chỉ được là B1 đến B6) vì regex ở `src/lab8/check_submission.py:243` là `B[1-6]`; công cụ chưa được cập nhật khi đề bài thêm B7 (`docs/bonus_topics.md`). Nhóm giữ đúng tiêu đề B7 và không sửa `check_submission.py`. Ngoài dòng này, `check_submission` không còn FAIL nào khác.
 
 - Topic + nguồn (tên, năm, slide): B7 · Kiểm toán grader — *Rethinking Evaluation of MAS Efficiency*, EMNLP 2026 (slide 44, 59).
 - CLAIM của nguồn (1 câu): Kết luận về hiệu năng của hệ agent có thể đến từ cách đo; nếu thước đo sai thì mọi so sánh shape đều sai theo, kể cả khi shape đúng.
