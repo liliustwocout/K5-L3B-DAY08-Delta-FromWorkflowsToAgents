@@ -80,6 +80,7 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Bằng chứng
 
-- `python -m pytest -q`: `73 passed, 248 deselected` (gồm 19 test mới).
-- `python -m pytest -q -m student -o addopts= -k "single and not workflow and not orchestrator and not swarm"`: `62 passed`.
-- `src/reports/ablation_r4.json`: `single` đạt `pass_rate = 1.000` (70/70), `pass^5 = 1.000`, `seed_variance = 0.000000`, `cost/success = 52.37 VND` (`mean_model_calls = 6.57`, `mean_tool_calls = 4.57`).
+- Commit `d2aca14`, `1eec41a`, PR #1 (`e98e9de`) vào `main`.
+- `python -m pytest -q`: `90 passed, 248 deselected` trên `main` (gồm 19 test mới của TV2 trong `src/tests/test_tv2_hidden_edge_cases.py`).
+- `python -m pytest -q -m student -o addopts=`: `248 passed, 90 deselected` (riêng `single` đạt `62/62`).
+- `src/reports/ablation_r4.json` & `src/reports/benchmark.json`: `single` đạt `pass_rate = 1.000` (70/70), `pass^5 = 1.000`, `seed_variance = 0.000000`, `cost/success = 52.37 VND` (`mean_model_calls = 6.57`, `mean_tool_calls = 4.57`).

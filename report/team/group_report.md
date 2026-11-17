@@ -78,5 +78,5 @@ Chi tiết đóng góp của từng thành viên nằm trong `TEAM.md` (bảng �
 
 - Tài liệu lab: `docs/architecture.md`, `docs/contracts.md` (RunResult, Trace contract v1, `handoff.v1`), `docs/business_rules.md`, `docs/metrics.md`, `RUBRIC.md`.
 - Docstring đề bài trong `src/lab8/shapes/workflow.py`, `single.py`, `orchestrator.py` và cổng host `src/lab8/durability.py`.
-- Nguồn cho phiếu nghiên cứu R4 (xem `report/team/research_card.md`): Zhang et al., *Rethinking Evaluation of MAS Efficiency*, EMNLP 2026.
+- Nguồn cho phiếu nghiên cứu R4 (xem `report/team/research_card.md`): Zhang, J., Zhang, L., Lu, P., Zhang, Q., Chuang, Y.-N., Li, Z., Xu, S., Chaudhary, V., & Chen, H. (2026), *"Rethinking the Evaluation of Efficiency Methods for Multi-Agent Systems"*, EMNLP 2026, pp. 18527–18562 (https://aclanthology.org/2026.emnlp-main.798/, arXiv:2609.05933).
 - Slide buổi lý thuyết Day 8 *From Workflows to Agents* (thư viện tham khảo, slide 68–69).
