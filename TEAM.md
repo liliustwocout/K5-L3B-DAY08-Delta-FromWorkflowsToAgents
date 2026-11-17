@@ -11,7 +11,7 @@
 
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
-|   1 | [Thành viên 1 điền] | [MSSV] | [Email] | [GitHub] | Workflow (`workflow.py`), Orchestrator & Handoff (`orchestrator.py`), Crash/Benchmark tổng hợp, ADR |
+|   1 | [Thành viên 1 điền] | [MSSV] | [Email] | [GitHub] | Shape A (`workflow.py`), Shape C (`orchestrator.py`) & Handoff, test workflow/orchestrator/handoff, `crash_test` + `benchmark` + `check_submission`, `TEAM.md` & `decision_adr.md` |
 |   2 | Lê Phạm Thành Đạt | 2A202604027 | datpltn205@gmail.com | liliustwocout | Single ReAct (`single.py`), Hidden Edge-Case Tests, Ablation & Research Card |
 
 Gợi ý chia vai:
@@ -25,7 +25,7 @@ Gợi ý chia vai:
 
 | Người | Vai | Commit | Test đã thêm hoặc sửa |
 | --- | --- | --- | --- |
-| [Thành viên 1 điền] | Workflow, Orchestrator, Infra & ADR | `[điền commit hash trên main]` | `[điền tên file test của TV1]` |
+| [Thành viên 1 điền] | Shape A (`workflow.py`), Shape C (`orchestrator.py`), benchmark/crash/check_submission, `TEAM.md` & `decision_adr.md` | `a559883` | `src/tests/test_workflow_orchestrator.py` |
 | Lê Phạm Thành Đạt | Single ReAct (`single.py`), Hidden Edge Cases & Research Card | `d2aca14` | `src/tests/test_tv2_hidden_edge_cases.py` (19 test cases) |
 
 ## Cá nhân
