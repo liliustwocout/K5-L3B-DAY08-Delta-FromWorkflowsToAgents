@@ -1,0 +1,298 @@
+{
+  "topic": "B7 grader audit",
+  "command": "python -m bonus.grader_audit_report --out reports/bonus_grader_audit.json",
+  "delay_days_2_vs_3": "ok",
+  "table": {
+    "grader_a": {
+      "infra_errors_do_not_move_pass_rate": "ok",
+      "duplicated_list_keeps_rates_doubles_totals": "violated x3",
+      "duplicated_list_excluding_pass_5": "violated x2",
+      "permutation_invariance (new)": "violated x4"
+    },
+    "grader_b": {
+      "infra_errors_do_not_move_pass_rate": "ok",
+      "duplicated_list_keeps_rates_doubles_totals": "violated x1",
+      "duplicated_list_excluding_pass_5": "ok",
+      "permutation_invariance (new)": "ok"
+    },
+    "grader_c": {
+      "infra_errors_do_not_move_pass_rate": "violated x7",
+      "duplicated_list_keeps_rates_doubles_totals": "violated x1",
+      "duplicated_list_excluding_pass_5": "ok",
+      "permutation_invariance (new)": "ok"
+    },
+    "lab8.metrics.summarize (base)": {
+      "infra_errors_do_not_move_pass_rate": "violated x7",
+      "duplicated_list_keeps_rates_doubles_totals": "violated x1",
+      "duplicated_list_excluding_pass_5": "ok",
+      "permutation_invariance (new)": "ok"
+    },
+    "mutant_first_seen (team-made)": {
+      "infra_errors_do_not_move_pass_rate": "ok",
+      "duplicated_list_keeps_rates_doubles_totals": "violated x1",
+      "duplicated_list_excluding_pass_5": "ok",
+      "permutation_invariance (new)": "violated x1"
+    }
+  },
+  "details": {
+    "grader_a": {
+      "infra_errors_do_not_move_pass_rate": [],
+      "duplicated_list_keeps_rates_doubles_totals": [
+        {
+          "shape": "workflow",
+          "metric": "pass_5",
+          "a": 0.666667,
+          "b": 0.0,
+          "expected": 0.666667
+        },
+        {
+          "shape": "workflow",
+          "metric": "cost_per_success_vnd",
+          "a": 31.5,
+          "b": 26.277778,
+          "expected": 31.5
+        },
+        {
+          "shape": "workflow",
+          "metric": "total_simulated_cost_vnd",
+          "a": 283.5,
+          "b": 473.0,
+          "expected": 567.0
+        }
+      ],
+      "duplicated_list_excluding_pass_5": [
+        {
+          "shape": "workflow",
+          "metric": "cost_per_success_vnd",
+          "a": 31.5,
+          "b": 26.277778,
+          "expected": 31.5
+        },
+        {
+          "shape": "workflow",
+          "metric": "total_simulated_cost_vnd",
+          "a": 283.5,
+          "b": 473.0,
+          "expected": 567.0
+        }
+      ],
+      "permutation_invariance (new)": [
+        {
+          "shape": "workflow",
+          "metric": "cost_per_success_vnd",
+          "a": 31.5,
+          "b": 31.666667,
+          "expected": 31.5,
+          "permutation": "reversed"
+        },
+        {
+          "shape": "workflow",
+          "metric": "total_simulated_cost_vnd",
+          "a": 283.5,
+          "b": 285.0,
+          "expected": 283.5,
+          "permutation": "reversed"
+        },
+        {
+          "shape": "workflow",
+          "metric": "cost_per_success_vnd",
+          "a": 31.5,
+          "b": 31.666667,
+          "expected": 31.5,
+          "permutation": "shuffled_seed0"
+        },
+        {
+          "shape": "workflow",
+          "metric": "total_simulated_cost_vnd",
+          "a": 283.5,
+          "b": 285.0,
+          "expected": 283.5,
+          "permutation": "shuffled_seed0"
+        }
+      ]
+    },
+    "grader_b": {
+      "infra_errors_do_not_move_pass_rate": [],
+      "duplicated_list_keeps_rates_doubles_totals": [
+        {
+          "shape": "workflow",
+          "metric": "pass_5",
+          "a": 0.666667,
+          "b": 0.0,
+          "expected": 0.666667
+        }
+      ],
+      "duplicated_list_excluding_pass_5": [],
+      "permutation_invariance (new)": []
+    },
+    "grader_c": {
+      "infra_errors_do_not_move_pass_rate": [
+        {
+          "shape": "workflow",
+          "metric": "graded_trials",
+          "a": 12,
+          "b": 16,
+          "expected": 12
+        },
+        {
+          "shape": "workflow",
+          "metric": "pass_rate",
+          "a": 0.75,
+          "b": 0.5625,
+          "expected": 0.75
+        },
+        {
+          "shape": "workflow",
+          "metric": "pass_5",
+          "a": 0.666667,
+          "b": 0.5,
+          "expected": 0.666667
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_pass_rates",
+          "a": {
+            "11": 0.833333,
+            "22": 0.666667
+          },
+          "b": {
+            "11": 0.625,
+            "22": 0.5
+          },
+          "expected": {
+            "11": 0.833333,
+            "22": 0.666667
+          }
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_variance",
+          "a": 0.006944,
+          "b": 0.003906,
+          "expected": 0.006944
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_min",
+          "a": 0.666667,
+          "b": 0.5,
+          "expected": 0.666667
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_max",
+          "a": 0.833333,
+          "b": 0.625,
+          "expected": 0.833333
+        }
+      ],
+      "duplicated_list_keeps_rates_doubles_totals": [
+        {
+          "shape": "workflow",
+          "metric": "pass_5",
+          "a": 0.666667,
+          "b": 0.0,
+          "expected": 0.666667
+        }
+      ],
+      "duplicated_list_excluding_pass_5": [],
+      "permutation_invariance (new)": []
+    },
+    "lab8.metrics.summarize (base)": {
+      "infra_errors_do_not_move_pass_rate": [
+        {
+          "shape": "workflow",
+          "metric": "graded_trials",
+          "a": 12,
+          "b": 16,
+          "expected": 12
+        },
+        {
+          "shape": "workflow",
+          "metric": "pass_rate",
+          "a": 0.75,
+          "b": 0.5625,
+          "expected": 0.75
+        },
+        {
+          "shape": "workflow",
+          "metric": "pass_5",
+          "a": 0.666667,
+          "b": 0.5,
+          "expected": 0.666667
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_pass_rates",
+          "a": {
+            "11": 0.833333,
+            "22": 0.666667
+          },
+          "b": {
+            "11": 0.625,
+            "22": 0.5
+          },
+          "expected": {
+            "11": 0.833333,
+            "22": 0.666667
+          }
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_variance",
+          "a": 0.006944,
+          "b": 0.003906,
+          "expected": 0.006944
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_min",
+          "a": 0.666667,
+          "b": 0.5,
+          "expected": 0.666667
+        },
+        {
+          "shape": "workflow",
+          "metric": "seed_max",
+          "a": 0.833333,
+          "b": 0.625,
+          "expected": 0.833333
+        }
+      ],
+      "duplicated_list_keeps_rates_doubles_totals": [
+        {
+          "shape": "workflow",
+          "metric": "pass_5",
+          "a": 0.666667,
+          "b": 0.0,
+          "expected": 0.666667
+        }
+      ],
+      "duplicated_list_excluding_pass_5": [],
+      "permutation_invariance (new)": []
+    },
+    "mutant_first_seen (team-made)": {
+      "infra_errors_do_not_move_pass_rate": [],
+      "duplicated_list_keeps_rates_doubles_totals": [
+        {
+          "shape": "workflow",
+          "metric": "pass_5",
+          "a": 0.666667,
+          "b": 0.0,
+          "expected": 0.666667
+        }
+      ],
+      "duplicated_list_excluding_pass_5": [],
+      "permutation_invariance (new)": [
+        {
+          "shape": "workflow",
+          "metric": "pass_rate",
+          "a": 0.833333,
+          "b": 0.666667,
+          "expected": 0.833333,
+          "permutation": "reversed"
+        }
+      ]
+    }
+  }
+}
