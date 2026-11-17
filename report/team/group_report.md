@@ -52,7 +52,12 @@ Chạy trên 14 public claims × 5 seeds (`11, 22, 33, 44, 55`, 70 trial/shape).
 | `orchestrator` | `1.000` (70/70) | `1.000` | `1.000`–`1.000` | `0.000000` | `57.18` | `4.71` / `5.0` | `mean_model_calls=2.00`, `mean_tool_calls=5.57` |
 | `swarm` *(đối chứng)* | `0.986` (69/70) | `0.929` | `0.929`–`1.000` | `0.000816` | `49.57` | `2.80` / `3.0` | Fail `C-002` seed 55 (`status resolved != denied`) |
 
-Quyết định kiến trúc và lý do: xem `report/team/decision_adr.md`. Phiếu nghiên cứu và ablation: xem `report/team/research_card.md`.
+Quyết định kiến trúc và lý do: xem `report/team/decision_adr.md`. Phiếu nghiên cứu và ablation: xem `report/team/research_card.md`. Kết quả kiểm toán grader (Bonus B7): xem `report/team/bonus_report.md` và `src/reports/bonus_grader_audit.json`.
+
+### Tự kiểm trên `student_drop/` (`src/reports/hidden_selfcheck.json`)
+Sau khi nhận bộ 40 hidden claim không nhãn (`C-H01`–`C-H40`) từ lab coach, nhóm chạy lại benchmark 4 shape × 5 seed (`200` trial/shape, `student_drop/` bị `.gitignore` chặn nên không commit):
+- `workflow`, `single`, `orchestrator` đều đạt **`error_trials = 0`**, **`leak_suspect_trials = 0`**, `trace.v1` hợp lệ `200/200` và đồng thuận 100% `status` trên mọi cặp `(claim, seed)` (`90` `resolved`, `95` `denied`, `10` `escalated`, `5` `needs_info`), với tổng chi phí mô phỏng 200 trial lần lượt là `6,006.20 VND` (`workflow`), `10,907.54 VND` (`single`) và `11,944.20 VND` (`orchestrator`).
+- `swarm` (`10,182.38 VND`) lệch ở `seed = 55` trên **6 hidden claim**: `C-H01`, `C-H02`, `C-H04`, `C-H13`, `C-H20` (tin ticket nói quá nên trả `resolved` thay vì `denied`) và `C-H40` (tin ticket nói giảm `1 ngày` nên trả `denied` thay vì `resolved`).
 
 ## 5. Khó khăn và cách xử lý
 
@@ -63,10 +68,11 @@ Quyết định kiến trúc và lý do: xem `report/team/decision_adr.md`. Phi�
 3. **Không trừ tiền hai lần (Shape A/C):** dễ muốn tự trừ phần đã hoàn của claim khác trên cùng đơn trước khi gọi `issue_refund`. Docstring và `durability.issue_refund` cho thấy host đã tự trừ (`order_refunded_vnd`), nên shape luôn truyền **quote đầy đủ**; test `test_approval_mismatch_records_policy_denied_with_full_proposal` khóa hành vi `proposal_amount` = quote đầy đủ khi host từ chối.
 4. **Crash phải lan ra ngoài nhưng trace vẫn hợp lệ:** nếu bắt `InjectedCrash` rồi trả `RunResult` thì crash suite fail; nếu không ghi trace thì mất bằng chứng. Cách xử lý: bắt, ghi event `crash`, `trace.write()` rồi `raise` lại; test 3 mốc crash × 2 shape kiểm tra chạy lại chỉ có 1 refund và 1 audit.
 5. **Tích hợp hai nhánh:** repo nhóm là fork nên GitHub Desktop mặc định mở PR sang repo đề bài; nhóm đổi *Fork behavior* sang "For my own purposes" và tạo PR vào `main` của repo nhóm. Khi merge, `TEAM.md` bị conflict giữa hai nhánh; nhóm gộp tay (giữ thông tin cả hai thành viên) rồi chạy lại `pytest`, benchmark, crash suite và `check_submission` trên code đã gộp.
+6. **Bug regex `B[1-6]` trong `check_submission.py` khi làm Bonus B7:** `src/lab8/check_submission.py:243` kiểm tiêu đề `report/team/bonus_report.md` bằng regex `r"Bonus report:\s*B[1-6]\b"`, chưa cập nhật cho topic `B7` mới thêm trong `docs/bonus_topics.md`. Nhóm giữ nguyên file `check_submission.py` (không sửa công cụ chấm) và giữ đúng tiêu đề `# Bonus report: B7`, đồng thời ghi chú rõ tình trạng `1 FAIL` duy nhất ở dòng này.
 
 ## 6. Tổng hợp đóng góp
 
-Chi tiết đóng góp của từng thành viên nằm trong `TEAM.md` (bảng đóng góp) và báo cáo cá nhân theo mẫu `report/team/MSSV_HoTen.md`: Thành viên 1 là `report/team/2A202604071_TranDucDuy.md`, Thành viên 2 là `report/team/2A202604027_LePhamThanhDat.md`.
+Chi tiết đóng góp của từng thành viên nằm trong `TEAM.md` (bảng đóng góp) và báo cáo cá nhân theo mẫu `report/team/MSSV_HoTen.md`: Thành viên 1 là `report/team/2A202604071_TranDucDuy.md` (kèm Bonus B7 ở `src/bonus/` và `report/team/bonus_report.md`), Thành viên 2 là `report/team/2A202604027_LePhamThanhDat.md`.
 
 ## 7. Hạn chế và hướng cải thiện
 

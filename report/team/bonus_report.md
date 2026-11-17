@@ -2,7 +2,7 @@
 
 > **Ghi chú nộp bài:** `python -m lab8.check_submission` báo 1 FAIL cho file này (đòi tiêu đề chỉ được là B1 đến B6) vì regex ở `src/lab8/check_submission.py:243` là `B[1-6]`; công cụ chưa được cập nhật khi đề bài thêm B7 (`docs/bonus_topics.md`). Nhóm giữ đúng tiêu đề B7 và không sửa `check_submission.py`. Ngoài dòng này, `check_submission` không còn FAIL nào khác.
 
-- Topic + nguồn (tên, năm, slide): B7 · Kiểm toán grader — *Rethinking Evaluation of MAS Efficiency*, EMNLP 2026 (slide 44, 59).
+- Topic + nguồn (tên, năm, slide): B7 · Kiểm toán grader — Zhang et al. (2026), *"Rethinking the Evaluation of Efficiency Methods for Multi-Agent Systems"*, EMNLP 2026 (https://aclanthology.org/2026.emnlp-main.798/, slide 44, 59).
 - CLAIM của nguồn (1 câu): Kết luận về hiệu năng của hệ agent có thể đến từ cách đo; nếu thước đo sai thì mọi so sánh shape đều sai theo, kể cả khi shape đúng.
 - BOUNDARY (model / dataset / setup): Nguồn nói về benchmark MAS dùng LLM thật; ở đây chỉ kiểm hàm tổng hợp `summarize` trên trial dựng sẵn (`grader_audit/fixtures/`, 1 shape, 6–8 claim, 2 seed) và hàm `lab8.compensation.quote`, không có model nào chạy.
 - HYPOTHESIS trên LogiX: Ba quan hệ metamorphic trong `grader_audit/README.md` đủ để tách bản `summarize` đúng khỏi bản lệch mà không cần đáp án tuyệt đối; và có ít nhất một lớp lỗi lọt qua cả ba, cần quan hệ thứ tư.
