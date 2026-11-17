@@ -5,7 +5,7 @@
 - Tên nhóm: Delta
 - Lớp: L3B
 - Repo nhóm: `K5-L3B-DAY08-Delta-FromWorkflowsToAgents` (xem [SUBMISSION.md](SUBMISSION.md))
-- URL repo, nhánh nộp, commit chốt: `https://github.com/liliustwocout/K5-L3B-DAY08-Delta-FromWorkflowsToAgents` · nhánh `main` · commit `c4b09db`
+- URL repo, nhánh nộp, commit chốt: `https://github.com/liliustwocout/K5-L3B-DAY08-Delta-FromWorkflowsToAgents` · nhánh `main` · commit `512d788`
 
 ## Thành viên
 
