@@ -26,7 +26,7 @@ Gợi ý chia vai:
 | Người | Vai | Commit | Test đã thêm hoặc sửa |
 | --- | --- | --- | --- |
 | [Thành viên 1 điền] | Workflow, Orchestrator, Infra & ADR | `[điền commit hash trên main]` | `[điền tên file test của TV1]` |
-| Lê Phạm Thành Đạt | Single ReAct (`single.py`), Hidden Edge Cases & Research Card | `[cập nhật commit hash sau khi commit]` | `src/tests/test_tv2_hidden_edge_cases.py` (19 test cases) |
+| Lê Phạm Thành Đạt | Single ReAct (`single.py`), Hidden Edge Cases & Research Card | `d2aca14` | `src/tests/test_tv2_hidden_edge_cases.py` (19 test cases) |
 
 ## Cá nhân
 

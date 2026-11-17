@@ -28,7 +28,7 @@
 
 ## 4. Bằng chứng
 
-- **Branch & Commit:** nhánh `feat/tv2-single-eval` (sẽ cập nhật hash sau khi commit và merge vào `main`).
+- **Branch & Commit:** nhánh `feat/tv2-single-eval`, commit chính `d2aca14` (sẽ cập nhật thêm commit chốt trên `main` sau khi merge phần Thành viên 1).
 - **Kết quả kiểm thử tại `src/`:**
   - `python -m lab8.smoke` → `lab8.smoke pass` (`python 3.11.9 | Windows AMD64`).
   - `python -m pytest -q` → `73 passed, 248 deselected` (gồm 54 host test gốc + 19 test mới trong `tests/test_tv2_hidden_edge_cases.py`).
