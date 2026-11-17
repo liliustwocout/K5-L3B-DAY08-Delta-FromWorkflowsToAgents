@@ -19,7 +19,11 @@ Nhóm 2 người chia việc song song theo hai nhánh độc lập để tránh
 ## 3. Giải pháp
 
 ### Shape A — Deterministic Workflow (`src/lab8/shapes/workflow.py`)
-`[Thành viên 1 điền chi tiết triển khai workflow sau khi merge]`
+- **Luồng cố định, không vòng lặp:** mở SQLite qua `lab8.db.connect(store_path)` (đóng trong `finally`), đọc claim qua `get_claim_view` (đã bỏ `parent_secret`, `raw_headers_json`). Không thấy claim → `failed` (`unknown_claim`).
+- **Rẽ nhánh bằng Python trên dữ liệu có cấu trúc:** không có `order_id` → `needs_info`; `lookup_order(conn, order_id, principal_id)` không visible (khác chủ đơn, mã đơn homoglyph, không tồn tại) → `escalated`; quote từ `compute_compensation(conn, order)` trên dòng `orders` + policy hiện hành, **bỏ qua số ngày trễ ghi trong ticket**; quote `0` (đơn hủy, chưa đủ ngày trễ) → `denied`, không gọi `issue_refund`.
+- **Cổng ghi tiền:** quote `> 0` → `durability.issue_refund(conn, claim_id, <quote đầy đủ>, crash_at=crash_at)`. Không tự trừ phần đã hoàn của claim khác vì host đã trừ (T13, T14). Kết quả host: `ok` → `resolved`; `amount_conflict` → `failed`; lỗi approval/đã hoàn → `denied` (host ghi `policy_denied`), `proposal_amount` vẫn là quote đầy đủ.
+- **Model chỉ soạn chữ:** đúng 1 lần `MockLLM.complete(purpose="draft")` ở mỗi nhánh kết thúc; model không chọn số tiền, không commit refund.
+- **Crash & trace:** `InjectedCrash` được ghi event `crash`, flush trace rồi `raise` lại (không nuốt), chạy lại trên cùng DB thì host trả kết quả idempotent (1 ledger row, 1 audit `refund_committed`). Trace v1 chỉ ghi `claim` (`claim_id`, `has_order_id`), `lookup_order` (allowlist `ORDER_FIELDS`), `quote`, `host_refund`, `decision`; mọi nhánh return đều qua `lab8.shapes.common.finish()`.
 
 ### Shape B — Bounded Single ReAct Agent (`src/lab8/shapes/single.py`)
 - **Đọc dữ liệu có kiểm soát:** Mở SQLite qua `lab8.db.connect(store_path)` (đảm bảo `conn.close()` trong `finally`), đọc claim qua `get_claim_view` (loại bỏ `parent_secret` và `raw_headers_json`). Nếu không tìm thấy claim → trả `failed` (`unknown_claim`).
@@ -31,18 +35,21 @@ Nhóm 2 người chia việc song song theo hai nhánh độc lập để tránh
 - **Cổng ghi Host & Trace v1:** Khi `proposal > 0`, shape truyền **quote đầy đủ** vào `durability.issue_refund(conn, claim_id, proposal, crash_at=crash_at)` để host kiểm tra approval gắn đúng `claim_id`, trừ phần đã hoàn trước đó trên cùng đơn, và ghi `refund_ledger` + `refund_committed` trong cùng một transaction. `InjectedCrash` được ghi sự kiện `crash` vào trace, flush file và `raise` lại nguyên trạng. Mọi nhánh return đều đi qua `lab8.shapes.common.finish()`.
 
 ### Shape C — Orchestrator & Read-Only Investigators (`src/lab8/shapes/orchestrator.py`)
-`[Thành viên 1 điền chi tiết triển khai orchestrator và cơ chế sanitize handoff.v1 sau khi merge]`
+- **Phần đầu giống workflow:** `get_claim_view` → `unknown_claim`/`needs_info`, cộng 1 lần `MockLLM.complete(purpose="plan")` để lập kế hoạch (ghi event `plan` chỉ có `claim_id`, `has_order_id`).
+- **Handoff qua allowlist, không qua LLM:** tạo gói bằng `lab8.handoff.make_handoff(request_id, claim_id, task, facts={}, allowed_tools=["lookup_order", "lookup_policy", "lookup_refund_history"])`. `make_handoff`/`sanitize` chỉ giữ field trong `ALLOWED_FIELDS`, lọc key lạ trong `facts`, từ chối write tool (`issue_refund`, `append_audit`) và chuỗi `CANARY_SECRET_*` (`HandoffError`). Không đưa `parent_secret`, `raw_headers`, ticket thô hay cả dòng claim vào handoff. Trace ghi **bản handoff đã sanitize** (`handoff.v1`), không ghi ngữ cảnh cha.
+- **Investigator chỉ đọc:** `lab8.runtime.run_readonly_investigators(conn, budget, handoff, principal_id=...)` chạy 3 tool đọc; investigator không có write registry. Event `investigator` chỉ ghi order view đã allowlist, lịch sử hoàn và số policy.
+- **Orchestrator giữ quyền ghi:** quote từ order view của investigator bằng `compute_compensation`, rồi gọi `durability.issue_refund` với quote đầy đủ và `crash_at`, map kết quả và xử lý `InjectedCrash` giống workflow. Tổng `2` model calls (plan + draft).
 
 ## 4. Kết quả
 
-Số liệu sơ bộ từ `src/reports/ablation_r4.json` cho phần `single` (đã hoàn thành) và đối chứng `swarm` trên 14 public claims × 5 seeds (`11, 22, 33, 44, 55`, 70 trial/shape). `[Thành viên 1 bổ sung đầy đủ 4 shape workflow, single, orchestrator, swarm từ src/reports/benchmark.json và crash_safety từ src/reports/crash.json sau khi merge]`:
+Số liệu sơ bộ từ `src/reports/ablation_r4.json` cho phần `single` (đã hoàn thành) và đối chứng `swarm` trên 14 public claims × 5 seeds (`11, 22, 33, 44, 55`, 70 trial/shape). Số liệu đầy đủ 4 shape lấy từ `src/reports/benchmark.json` (chạy lại sau khi merge cả hai nhánh, cùng corpus và seed); `single_no_llm` lấy từ `src/reports/ablation_r4.json`. Crash suite: `crash_safety = 20/20` (`src/reports/crash.json`):
 
 | Shape | Pass rate | Pass^5 | Seed min–max | Seed variance | Cost/success (VND mô phỏng) | Mean / p95 steps | Ghi chú |
 | --- | ---: | ---: | --- | ---: | ---: | --- | --- |
-| `workflow` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | |
+| `workflow` | `1.000` (70/70) | `1.000` | `1.000`–`1.000` | `0.000000` | `28.89` | `3.79` / `4.0` | `mean_model_calls=1.00`, `mean_tool_calls=2.79`; shape được chọn |
 | `single` | `1.000` (70/70) | `1.000` | `1.000`–`1.000` | `0.000000` | `52.37` | `10.14` / `13.0` | `mean_model_calls=6.57`, `mean_tool_calls=4.57` |
 | `single_no_llm` *(ablation)* | `1.000` (70/70) | `1.000` | `1.000`–`1.000` | `0.000000` | `45.71` | `9.14` / `12.0` | `mean_model_calls=0.00`, `mean_tool_calls=4.57` |
-| `orchestrator` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | `[Chờ TV1]` | |
+| `orchestrator` | `1.000` (70/70) | `1.000` | `1.000`–`1.000` | `0.000000` | `57.18` | `4.71` / `5.0` | `mean_model_calls=2.00`, `mean_tool_calls=5.57` |
 | `swarm` *(đối chứng)* | `0.986` (69/70) | `0.929` | `0.929`–`1.000` | `0.000816` | `49.57` | `2.80` / `3.0` | Fail `C-002` seed 55 (`status resolved != denied`) |
 
 Quyết định kiến trúc và lý do: xem `report/team/decision_adr.md`. Phiếu nghiên cứu và ablation: xem `report/team/research_card.md`.
@@ -53,7 +60,9 @@ Quyết định kiến trúc và lý do: xem `report/team/decision_adr.md`. Phi�
 2. **Thiết kế test `amount_conflict` và test nối tiếp trên cùng SQLite (`src/tests/test_tv2_hidden_edge_cases.py`):**
    - Khi thử kích hoạt `amount_conflict` trên `C-001` bằng cách bật `damage_verified = 1` (quote tăng lên `150.000`), `policy.authorize` vẫn chặn số tiền được duyệt ở mức `approved_vnd = 35.000` nên không sinh conflict. Đổi kịch bản test sang thay đổi `shipping_fee_vnd = 20.000 <= approved_vnd` thì host bắt đúng `amount_conflict` và giữ nguyên `35.000` trong ledger.
    - Khi chạy nhiều claim nối tiếp trên cùng file SQLite, `trial_pass` dùng `unexpected_ledger_rows` (chỉ tính `prior_refund_rows` được seed từ đầu) nên báo lỗi nếu chấm từng claim giữa chuỗi. Nhóm xử lý bằng cách kiểm tra trực tiếp `refund_ledger`, `audit_events` (`policy_denied`) và `check_trace` cho kịch bản đa claim nối tiếp, đồng thời giữ `trial_pass` cho bài test một claim/DB.
-3. `[Thành viên 1 bổ sung thêm khó khăn gặp phải nếu có]`
+3. **Không trừ tiền hai lần (Shape A/C):** dễ muốn tự trừ phần đã hoàn của claim khác trên cùng đơn trước khi gọi `issue_refund`. Docstring và `durability.issue_refund` cho thấy host đã tự trừ (`order_refunded_vnd`), nên shape luôn truyền **quote đầy đủ**; test `test_approval_mismatch_records_policy_denied_with_full_proposal` khóa hành vi `proposal_amount` = quote đầy đủ khi host từ chối.
+4. **Crash phải lan ra ngoài nhưng trace vẫn hợp lệ:** nếu bắt `InjectedCrash` rồi trả `RunResult` thì crash suite fail; nếu không ghi trace thì mất bằng chứng. Cách xử lý: bắt, ghi event `crash`, `trace.write()` rồi `raise` lại; test 3 mốc crash × 2 shape kiểm tra chạy lại chỉ có 1 refund và 1 audit.
+5. **Tích hợp hai nhánh:** repo nhóm là fork nên GitHub Desktop mặc định mở PR sang repo đề bài; nhóm đổi *Fork behavior* sang "For my own purposes" và tạo PR vào `main` của repo nhóm. Khi merge, `TEAM.md` bị conflict giữa hai nhánh; nhóm gộp tay (giữ thông tin cả hai thành viên) rồi chạy lại `pytest`, benchmark, crash suite và `check_submission` trên code đã gộp.
 
 ## 6. Tổng hợp đóng góp
 

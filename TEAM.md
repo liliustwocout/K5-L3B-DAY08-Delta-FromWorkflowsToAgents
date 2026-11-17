@@ -11,7 +11,7 @@
 
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
-|   1 | [Thành viên 1 điền] | [MSSV] | [Email] | [GitHub] | Shape A (`workflow.py`), Shape C (`orchestrator.py`) & Handoff, test workflow/orchestrator/handoff, `crash_test` + `benchmark` + `check_submission`, `TEAM.md` & `decision_adr.md` |
+|   1 | Trần Đức Duy | 2A202604071 | tran85122@gmail.com | tran85122-afk | Shape A (`workflow.py`), Shape C (`orchestrator.py`) & Handoff, test workflow/orchestrator/handoff, `crash_test` + `benchmark` + `check_submission`, `TEAM.md` & `decision_adr.md` |
 |   2 | Lê Phạm Thành Đạt | 2A202604027 | datpltn205@gmail.com | liliustwocout | Single ReAct (`single.py`), Hidden Edge-Case Tests, Ablation & Research Card |
 
 Gợi ý chia vai:
@@ -25,7 +25,7 @@ Gợi ý chia vai:
 
 | Người | Vai | Commit | Test đã thêm hoặc sửa |
 | --- | --- | --- | --- |
-| [Thành viên 1 điền] | Shape A (`workflow.py`), Shape C (`orchestrator.py`), benchmark/crash/check_submission, `TEAM.md` & `decision_adr.md` | `a559883` | `src/tests/test_workflow_orchestrator.py` |
+| Trần Đức Duy | Shape A (`workflow.py`), Shape C (`orchestrator.py`), benchmark/crash/check_submission, `TEAM.md` & `decision_adr.md` | `a559883` | `src/tests/test_workflow_orchestrator.py` |
 | Lê Phạm Thành Đạt | Single ReAct (`single.py`), Hidden Edge Cases & Research Card | `d2aca14` | `src/tests/test_tv2_hidden_edge_cases.py` (19 test cases) |
 
 ## Cá nhân
@@ -40,19 +40,28 @@ Ví dụ: `report/team/20241234_NguyenVanAn.md`.
 
 Sao chép mục dưới đây cho từng thành viên.
 
-## [Thành viên 1: MSSV_HoTen]
+## 2A202604071_TranDucDuy
 
 ### Phần việc phụ trách
 
-- `[Thành viên 1 điền]`
+- Shape A — Deterministic Workflow (`src/lab8/shapes/workflow.py`).
+- Shape C — Orchestrator + read-only investigators và handoff `handoff.v1` (`src/lab8/shapes/orchestrator.py`).
+- Bộ test cho workflow / orchestrator / handoff (`src/tests/test_workflow_orchestrator.py`).
+- Chạy `crash_test`, `benchmark` 4 shape × 5 seed, `check_submission`; viết `TEAM.md`, `report/team/decision_adr.md`, phần Shape A/C trong `report/team/group_report.md`.
 
 ### Đóng góp cụ thể
 
-- `[Thành viên 1 điền]`
+- `workflow.py`: luồng cố định `needs_info` / `escalated` / `denied` / `resolved` / `failed`, tiền tính bằng `compute_compensation` trên dòng `orders` (bỏ qua số ngày trễ trong ticket), truyền quote đầy đủ vào `durability.issue_refund`, `InjectedCrash` được ghi trace rồi `raise` lại; model chỉ soạn chữ (1 call).
+- `orchestrator.py`: handoff tạo bằng `make_handoff` với `facts={}` và 3 read-only tool, `run_readonly_investigators` đọc dữ liệu, orchestrator tự quote và gọi `issue_refund`; trace ghi bản handoff đã sanitize.
+- Test: claim không tồn tại, T02 seed 55, 3 mốc crash × 2 shape, homoglyph / đơn hủy, mượn approval của claim khác, handoff lọc key lạ + từ chối write tool / canary, so sánh cost workflow < orchestrator.
+- Merge nhánh TV2 vào nhánh TV1, gộp conflict `TEAM.md`, chạy lại benchmark/crash trên code đã gộp và cập nhật số liệu `single` vào ADR.
 
 ### Bằng chứng
 
-- `[Thành viên 1 điền]`
+- Commit `a559883` (Shape A + C, test, report), commit merge `dfd4eda`, PR #2 vào `main`.
+- `python -m pytest -q`: `90 passed`; `python -m pytest -q -m student -o addopts=`: `248 passed` (workflow 62/62, orchestrator 62/62).
+- `src/reports/benchmark.json`: `workflow` `1.000` / `pass^5 1.000` / `28.89` VND/success; `orchestrator` `1.000` / `57.18` VND/success. `src/reports/crash.json`: `20/20`.
+- `python -m lab8.check_submission`: `0 FAIL, 0 WARN`.
 
 ## 2A202604027_LePhamThanhDat
 
