@@ -42,7 +42,7 @@ Nhóm 2 người chia việc song song theo hai nhánh độc lập để tránh
 
 ## 4. Kết quả
 
-Số liệu sơ bộ từ `src/reports/ablation_r4.json` cho phần `single` (đã hoàn thành) và đối chứng `swarm` trên 14 public claims × 5 seeds (`11, 22, 33, 44, 55`, 70 trial/shape). Số liệu đầy đủ 4 shape lấy từ `src/reports/benchmark.json` (chạy lại sau khi merge cả hai nhánh, cùng corpus và seed); `single_no_llm` lấy từ `src/reports/ablation_r4.json`. Crash suite: `crash_safety = 20/20` (`src/reports/crash.json`):
+Chạy trên 14 public claims × 5 seeds (`11, 22, 33, 44, 55`, 70 trial/shape). Số liệu 4 shape lấy từ `src/reports/benchmark.json` (chạy lại sau khi merge cả hai nhánh, cùng corpus và seed); dòng ablation `single_no_llm` lấy từ `src/reports/ablation_r4.json`. Crash suite: `crash_safety = 20/20` (`src/reports/crash.json`):
 
 | Shape | Pass rate | Pass^5 | Seed min–max | Seed variance | Cost/success (VND mô phỏng) | Mean / p95 steps | Ghi chú |
 | --- | ---: | ---: | --- | ---: | ---: | --- | --- |
@@ -66,14 +66,17 @@ Quyết định kiến trúc và lý do: xem `report/team/decision_adr.md`. Phi�
 
 ## 6. Tổng hợp đóng góp
 
-Chi tiết đóng góp của từng thành viên nằm trong `TEAM.md` (bảng đóng góp) và báo cáo cá nhân `report/team/MSSV_HoTen.md` (của Thành viên 2 là `report/team/2A202604027_LePhamThanhDat.md`).
+Chi tiết đóng góp của từng thành viên nằm trong `TEAM.md` (bảng đóng góp) và báo cáo cá nhân theo mẫu `report/team/MSSV_HoTen.md`: Thành viên 1 là `report/team/2A202604071_TranDucDuy.md`, Thành viên 2 là `report/team/2A202604027_LePhamThanhDat.md`.
 
 ## 7. Hạn chế và hướng cải thiện
 
 - **Giới hạn của môi trường mô phỏng:** `MockLLM` không phải model ngôn ngữ thật và sinh câu chữ dựa trên SHA-256 hash theo `seed`, vì vậy không phản ánh hết rủi ro hallucination tự nhiên hoặc lỗi phân tích ngữ nghĩa phức tạp ngoài mẫu câu `tre <N> ngay`. Giá token tính bằng VND mô phỏng theo `config/pricing.yaml` (không phải hóa đơn API thật) và `latency` để `unavailable`.
-- **Giới hạn quy mô dữ liệu & đo bước:** Bộ public chỉ có 14 claim. Ngoài ra, chỉ số `mean_steps` phụ thuộc vào số event do shape chủ động ghi vào trace JSON (ví dụ `swarm` ghi ít event trace hơn nên `mean_steps = 2.8` dù gọi nhiều `model_calls` và `tool_calls` hơn `single` với `mean_steps = 10.0`).
+- **Giới hạn quy mô dữ liệu & đo bước:** Bộ public chỉ có 14 claim. Ngoài ra, chỉ số `mean_steps` phụ thuộc vào số event do shape chủ động ghi vào trace JSON (ví dụ `swarm` ghi ít event trace hơn nên `mean_steps = 2.8` dù gọi nhiều `model_calls` và `tool_calls` hơn `single` với `mean_steps = 10.14`).
 - **Hướng cải thiện khi đưa ra production:** Cần thay `MockLLM` bằng model thật kèm đánh giá latency đầu-cuối, bổ sung bộ test ngữ nghĩa tự nhiên cho việc rút trích thông tin hỗ trợ (vẫn khóa mọi tính toán tiền tệ, quyền sở hữu, approval và ledger idempotency ở tầng code deterministic), và giữ cơ chế outbox/reconciliation nếu kết nối cổng thanh toán ngoài.
 
 ## 8. Tài liệu tham khảo
 
-...
+- Tài liệu lab: `docs/architecture.md`, `docs/contracts.md` (RunResult, Trace contract v1, `handoff.v1`), `docs/business_rules.md`, `docs/metrics.md`, `RUBRIC.md`.
+- Docstring đề bài trong `src/lab8/shapes/workflow.py`, `single.py`, `orchestrator.py` và cổng host `src/lab8/durability.py`.
+- Nguồn cho phiếu nghiên cứu R4 (xem `report/team/research_card.md`): Zhang et al., *Rethinking Evaluation of MAS Efficiency*, EMNLP 2026.
+- Slide buổi lý thuyết Day 8 *From Workflows to Agents* (thư viện tham khảo, slide 68–69).
